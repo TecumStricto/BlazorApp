@@ -1,0 +1,130 @@
+﻿@page "/counter"
+@using BlazorApp.Data
+@using BlazorApp.Service
+@inject IBussinesLogic service
+
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<!--https://blazor.radzen.com/datagrid-->
+<div class="row">
+    <div class="col-md-6">
+        <h3>DatePicker</h3>
+        <RadzenDatePicker @bind-Value="value" Change="@(args => Change(args, "DatePicker", "dd/MM/yyyy"))" />
+    </div>
+    <div class="col-md-6">
+        <h3>Events</h3>
+        <RadzenCard style="overflow: auto;height:750px;">
+            @foreach (var e in events.OrderByDescending(i => i.Key))
+            {
+                @e.Value
+                <br />
+            }
+        </RadzenCard>
+    </div>
+</div>
+
+
+
+@if (toDoList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var toDoItem in toDoList)
+            {
+                <tr>
+                    <td>@toDoItem.Id</td>
+                    <td>@toDoItem.description</td>
+                    <td>@toDoItem.activationDay.ToShortDateString()</td>
+                    <td><input type="button" class="btn btn-primary" value="Edit" /></td>
+                    <td><input type="button" class="btn btn-danger" value="Delete" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<RadzenDataList WrapItems="true" AllowPaging="true" Data="@toDoList" TItem="terminals">
+    <Template Context="toDoItem">
+        <RadzenCard Style="width:300px;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div>Company:</div>
+                    <b>@toDoItem.Id</b>
+                    <div style="margin-top:20px">Employee:</div>
+                    <b>@(toDoItem.description + " " + toDoItem.typeOfDevices)</b>
+                    <br />
+                </div>
+            </div>
+
+        </RadzenCard>
+    </Template>
+</RadzenDataList>
+
+
+
+<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+            AllowSorting="true" Data="@toDoList" TItem="terminals" ColumnWidth="200px">
+    <Columns>
+        <RadzenGridColumn TItem="terminals" Property="Id" Title="Id ID" />
+        <RadzenGridColumn TItem="terminals" Property="description" Title="opis" />
+        <RadzenGridColumn TItem="terminals" Property="activationDay" Title="Birth Date">
+            <Template Context="toDoItem">
+                @String.Format("{0:d}", toDoItem.activationDay)
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+</RadzenGrid>
+
+
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+
+
+
+    DateTime? value = DateTime.Now;
+
+    Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
+
+    void Change(DateTime? value, string name, string format)
+    {
+        events.Add(DateTime.Now, $"{name} value changed to {value?.ToString(format)}");
+        StateHasChanged();
+    }
+
+
+    IEnumerable<terminals> toDoList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        toDoList = await service.Get();
+    }
+
+
+
+}
