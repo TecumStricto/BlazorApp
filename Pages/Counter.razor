@@ -6,13 +6,15 @@
 
 @inject BlazorApp.sql.MyHttpClient Http
 @inject BlazorApp.sql.AppSettingsService AppSettingsService
-
+@using Components
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
 <!--https://blazor.radzen.com/datagrid-->
+<!--https://www.c-sharpcorner.com/article/create-a-single-page-app-with-blazor-server-and-entity-framework-core-3-0/-->
+<!-- https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/3.x-->
 <div class="row">
     <div class="col-md-6">
         <h3>DatePicker</h3>
@@ -109,6 +111,9 @@ else
     }
 
 
+    [CascadingParameter(Name = "ErrorComponent")]
+    protected IErrorComponent ErrorComponent { get; set; }
+
 
 
     DateTime? value = DateTime.Now;
@@ -132,7 +137,17 @@ else
         baseUrl = AppSettingsService.GetBaseUrl();
         //toDoList = await Http.GetJsonAsync<terminals[]>("http://localhost/droid/api/GetTerminals/1673F278");
 
-        toDoList = await Http.GetJsonAsync<terminals[]>(baseUrl + "GetTerminals/1673F278");
+        try {  
+            toDoList = await Http.GetJsonAsync<terminals[]>(baseUrl + "GetTerminals/1673F278");
+            if (toDoList == null)
+                 ErrorComponent.ShowError("title",service.GetError());
+        }
+        catch(Exception e)
+        {
+            ErrorComponent.ShowError(e.Message, e.StackTrace);
+        }
+
+       
 
     }
 

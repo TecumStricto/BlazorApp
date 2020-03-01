@@ -11,20 +11,31 @@ namespace BlazorApp.Service
     public interface IBussinesLogic
     {
         Task<IEnumerable<terminals>> Get();
-
+        string GetError();
     }
+
+
 
 
         public class BussinesLogic : IBussinesLogic
         {
             private readonly SqlDbContext _context;
+        private string sError;
 
-            public BussinesLogic(SqlDbContext context)
+        public string GetError ()
+        {
+            return sError;
+        }
+
+
+
+        public BussinesLogic(SqlDbContext context)
             {
                 _context = context;
             }
             public async Task<IEnumerable<terminals>> Get()
             {
+            sError = "OK";
 
             try
             {
@@ -32,13 +43,17 @@ namespace BlazorApp.Service
                 if (query != null)
                     return query;
                 else
+                {
+                    sError = "nema slogova";
                     return null;
+                }
             }
             catch (Exception ex)
             {
-
+                sError = ex.Message;
                 return null;
             }
+            
             }
 
         }
