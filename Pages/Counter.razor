@@ -4,6 +4,10 @@
 @inject IBussinesLogic service
 
 
+@inject BlazorApp.sql.MyHttpClient Http
+@inject BlazorApp.sql.AppSettingsService AppSettingsService
+
+
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
@@ -122,7 +126,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        toDoList = await service.Get();
+        //toDoList = await service.Get();
+
+        string baseUrl = "";
+        baseUrl = AppSettingsService.GetBaseUrl();
+        //toDoList = await Http.GetJsonAsync<terminals[]>("http://localhost/droid/api/GetTerminals/1673F278");
+
+        toDoList = await Http.GetJsonAsync<terminals[]>(baseUrl + "GetTerminals/1673F278");
+
     }
 
 

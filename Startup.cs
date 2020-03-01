@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using BlazorApp.Data;
 using BlazorApp.Service;
 using Microsoft.EntityFrameworkCore;
+using BlazorApp.sql;
 
 namespace BlazorApp
 {
@@ -30,6 +31,9 @@ namespace BlazorApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<MyHttpClient>();
+            services.AddSingleton<AppSettingsService>();
+
 
             services.AddDbContext<SqlDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<IBussinesLogic, BussinesLogic>();
