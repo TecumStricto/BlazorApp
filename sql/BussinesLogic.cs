@@ -12,6 +12,7 @@ namespace BlazorApp.Service
     {
         Task<IEnumerable<terminals>> Get();
         string GetError();
+        void SetError(string sError);
     }
 
 
@@ -26,8 +27,16 @@ namespace BlazorApp.Service
         {
             return sError;
         }
+        public void  SetError(string sError)
+        
+        {
+           sError=sError;
+        }
 
-
+        public BussinesLogic()
+        {
+            
+        }
 
         public BussinesLogic(SqlDbContext context)
             {

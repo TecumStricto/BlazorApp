@@ -8,6 +8,7 @@
 @inject BlazorApp.sql.AppSettingsService AppSettingsService
 @using Components
 
+
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
@@ -137,17 +138,20 @@ else
         baseUrl = AppSettingsService.GetBaseUrl();
         //toDoList = await Http.GetJsonAsync<terminals[]>("http://localhost/droid/api/GetTerminals/1673F278");
 
-        try {  
+        try
+        {
             toDoList = await Http.GetJsonAsync<terminals[]>(baseUrl + "GetTerminals/1673F278");
             if (toDoList == null)
-                 ErrorComponent.ShowError("title",service.GetError());
+            {
+               // ErrorComponent.ShowError("title", Http.GetError());
+            }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             ErrorComponent.ShowError(e.Message, e.StackTrace);
         }
 
-       
+
 
     }
 
